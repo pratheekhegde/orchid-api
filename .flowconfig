@@ -1,0 +1,10 @@
+[ignore]
+.*/node_modules/*
+
+[options]
+emoji=true
+
+[strict]
+
+[version]
+0.79.1
