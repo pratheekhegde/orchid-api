@@ -1,66 +1,34 @@
+import { mainStory } from 'storyboard';
 import ContentModel from './content.model';
 
-class ContentRepository {
-  async find(ctx) {
-    ctx.body = await ContentModel.find();
-  }
+const TAG = 'App:Repository:Content';
+const ContentRepository = {};
 
-  async findById(ctx) {
-    try {
-      const content = await ContentModel.findById(ctx.params.id);
-      if (!content) {
-        ctx.throw(404);
-      }
-      ctx.body = content;
-    } catch (err) {
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
-        ctx.throw(404);
-      }
-      ctx.throw(500);
-    }
-  }
+/**
+ * Get all contents
+ */
+ContentRepository.findAll = async () => {
+  return ContentModel.find();
+};
 
-  async add(ctx) {
-    try {
-      const content = await new content(ctx.request.body).save();
-      ctx.body = content;
-    } catch (err) {
-      ctx.throw(422);
-    }
-  }
+ContentRepository.findById = async contentId => {
+  return ContentModel.findById(contentId);
+};
 
-  async update(ctx) {
-    try {
-      const content = await ContentModel.findByIdAndUpdate(
-        ctx.params.id,
-        ctx.request.body
-      );
-      if (!content) {
-        ctx.throw(404);
-      }
-      ctx.body = content;
-    } catch (err) {
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
-        ctx.throw(404);
-      }
-      ctx.throw(500);
-    }
-  }
+/**
+ * Get all contents
+ * @param {content} Content Object
+ */
+ContentRepository.add = async content => {
+  return ContentModel(content).save();
+};
 
-  async delete(ctx) {
-    try {
-      const content = await ContentModel.findByIdAndRemove(ctx.params.id);
-      if (!content) {
-        ctx.throw(404);
-      }
-      ctx.body = content;
-    } catch (err) {
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
-        ctx.throw(404);
-      }
-      ctx.throw(500);
-    }
-  }
-}
+ContentRepository.update = async content => {
+  // [TODO]
+};
 
-export default new ContentRepository();
+ContentRepository.delete = async contentId => {
+  // [TODO]
+};
+
+export default ContentRepository;

@@ -5,14 +5,12 @@ import mongoose from 'mongoose';
  */
 const ContentSchema = mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true },
-    id: { type: String, required: true, unique: true },
-    createdAt: { type: Date, required: true, unique: true },
-    lastUpdatedAt: { type: Date, required: true, unique: true },
-    type: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    type: { type: String, required: true },
+    __v: { type: Number, select: false },
   },
 
-  { collection: 'Contents' }
+  { timestamps: true }
 );
 
 /**
