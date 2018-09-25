@@ -1,7 +1,7 @@
 import Mongoose from 'mongoose';
 import { mainStory } from 'storyboard';
 
-const TAG = 'App:Boot';
+const TAG = 'App:Main';
 const connectToMongoDB = async () => {
   const dbHost = process.env.DB_HOST || 'localhost';
   const dbPort = process.env.DB_PORT || 27017;

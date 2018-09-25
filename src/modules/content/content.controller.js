@@ -12,7 +12,7 @@ ContentController.getAll = async ctx => {
   try {
     ctx.body = await ContentRepository.findAll();
   } catch (err) {
-    mainStory.error(TAG, `Unable to get all Contents Reason: ${err.name}`);
+    mainStory.error(TAG, `Unable to get all Contents! Reason: ${err.name}`);
     ctx.throw(500);
   }
 };
@@ -25,18 +25,13 @@ ContentController.getById = async ctx => {
   try {
     ctx.body = await ContentRepository.findById(ctx.params.id);
   } catch (err) {
+    mainStory.error(
+      TAG,
+      `Content with id ${ctx.params.id} not found! Reason: ${err.name}`
+    );
     if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      mainStory.error(
-        TAG,
-        `Content with id ${ctx.params.id} not found! Reason: ${err.name}`
-      );
-      ctx.body = { message: 'Not found' };
-      ctx.status = 404;
+      ctx.throw(404, 'Content Not found');
     } else {
-      mainStory.error(
-        TAG,
-        `Content with id ${ctx.params.id} not found! Reason: ${err.name}`
-      );
       ctx.throw(500);
     }
   }
@@ -50,10 +45,8 @@ ContentController.add = async ctx => {
   try {
     ctx.body = await ContentRepository.add(ctx.request.body);
   } catch (err) {
-    mainStory.error(TAG, 'Unable to create new content!');
-    mainStory.error(TAG, `Reason: ${err}`);
-    ctx.body = err;
-    ctx.status = 400;
+    mainStory.error(TAG, `Unable to create new content! Reason: ${err}`);
+    ctx.throw(400, err);
   }
 };
 

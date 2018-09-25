@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import initServices from './services';
 import App from './App';
 
-const TAG = 'App:Boot';
+const TAG = 'App:Main';
 
 // load environment variables
 dotenv.config();
@@ -24,8 +24,25 @@ initServices().then(() => {
   );
 });
 
+// Koa error handling
+// App.on('error', (err, ctx) => {
+//   mainStory.error(TAG, ` Koa - Status:${err.status}, Message:${err.message}`);
+//   /* centralized error handling:
+//    *   console.log error
+//    *   write error to log file
+//    *   save error and request information to database if ctx.request match condition
+//    *   ...
+//   */
+//   try {
+//     // await new Promise(resolve => Raven.captureException(err, resolve));
+//   } catch (err) {
+//     // console.error('Raven error', err);
+//   }
+// });
+
+// Node error handling
 process.on('unhandledRejection', async err => {
-  mainStory.fatal(TAG, 'Unhandled rejection', err);
+  mainStory.fatal(TAG, `Node - Unhandled rejection : ${err}`);
   try {
     // await new Promise(resolve => Raven.captureException(err, resolve));
   } catch (err) {
@@ -36,7 +53,7 @@ process.on('unhandledRejection', async err => {
 });
 
 process.on('uncaughtException', async err => {
-  mainStory.fatal(TAG, 'Uncaught exception', err);
+  mainStory.fatal(TAG, `Node - Uncaught exception : ${err}`);
   try {
     // await new Promise(resolve => Raven.captureException(err, resolve));
   } catch (err) {
