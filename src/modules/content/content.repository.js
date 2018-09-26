@@ -1,6 +1,10 @@
 import { mainStory } from 'storyboard';
 import ContentModel from './content.model';
-
+import {
+  OrchidError,
+  TYPE_INVALID_PAYLOAD,
+  MESSAGE_INVALID_PAYLOAD,
+} from '../../helpers';
 const TAG = 'App:Repository:Content';
 const ContentRepository = {};
 
@@ -23,8 +27,17 @@ ContentRepository.add = async content => {
   return ContentModel(content).save();
 };
 
-ContentRepository.update = async content => {
-  // [TODO]
+ContentRepository.update = async (contentId, content) => {
+  // remove id field if exists
+  delete content._id;
+
+  // if there is nothing to update throw error
+  if (Object.keys(content).length === 0) {
+    throw new OrchidError(TYPE_INVALID_PAYLOAD, MESSAGE_INVALID_PAYLOAD);
+  }
+
+  // update the content
+  return ContentModel.updateOne({ _id: contentId }, content);
 };
 
 ContentRepository.delete = async contentId => {

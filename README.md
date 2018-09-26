@@ -1,8 +1,8 @@
 # Orchid API
 
-> Koa REST API server for Orchid Platform
+> Koa REST API server for Orchid Platform.
 
-## Quick Setup
+### Quick Setup
 
 ```sh
 git clone git@github.com:pratheekhegde/orchid-api.git
@@ -14,6 +14,12 @@ Dev server with live reload.
 
 ```sh
 yarn dev
+```
+
+Dev server with live reload and debugger on.
+
+```sh
+yarn dev:debug
 ```
 
 Production bundle and running.

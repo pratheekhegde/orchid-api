@@ -1,4 +1,4 @@
-import combineRouters from 'koa-combine-routers';
+import { combineRouters } from './helpers';
 import contentRouter from './modules/content/content.routes';
 import publisherRouter from './modules/publisher/publisher.routes';
 

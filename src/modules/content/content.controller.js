@@ -1,5 +1,11 @@
 import { mainStory } from 'storyboard';
 import ContentRepository from './content.repository';
+import {
+  TYPE_INVALID_PAYLOAD,
+  MESSAGE_CONTENT_UPDATED,
+  MESSAGE_CONTENT_NOT_UPDATED,
+  MESSAGE_CONTENT_NOT_FOUND,
+} from '../../helpers';
 
 const TAG = 'App:Controller:Content';
 const ContentController = {};
@@ -30,7 +36,7 @@ ContentController.getById = async ctx => {
       `Content with id ${ctx.params.id} not found! Reason: ${err.name}`
     );
     if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404, 'Content Not found');
+      ctx.throw(404, MESSAGE_CONTENT_NOT_FOUND);
     } else {
       ctx.throw(500);
     }
@@ -56,40 +62,29 @@ ContentController.add = async ctx => {
  */
 ContentController.update = async ctx => {
   try {
-    const content = await ContentRepository.findByIdAndUpdate(
+    const response = await ContentRepository.update(
       ctx.params.id,
       ctx.request.body
     );
-    if (!content) {
-      ctx.throw(404);
+    // if any documents were updated then return success
+    if (response.nModified > 0) {
+      ctx.body = {
+        success: true,
+        message: MESSAGE_CONTENT_UPDATED,
+      };
+    } else {
+      ctx.body = {
+        success: false,
+        message: MESSAGE_CONTENT_NOT_UPDATED,
+      };
     }
-    ctx.body = content;
   } catch (err) {
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404);
+    // if invalid payload then send 400
+    if (err.type === TYPE_INVALID_PAYLOAD) {
+      ctx.throw(400, err.message);
+    } else {
+      ctx.throw(500);
     }
-    ctx.throw(500);
-  }
-};
-/**
- * Update a content
- * @param {ctx} Koa Context
- */
-ContentController.updateGivenFields = async ctx => {
-  try {
-    const content = await ContentRepository.findByIdAndUpdate(
-      ctx.params.id,
-      ctx.request.body
-    );
-    if (!content) {
-      ctx.throw(404);
-    }
-    ctx.body = content;
-  } catch (err) {
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404);
-    }
-    ctx.throw(500);
   }
 };
 
