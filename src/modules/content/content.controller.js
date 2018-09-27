@@ -5,6 +5,9 @@ import {
   MESSAGE_CONTENT_UPDATED,
   MESSAGE_CONTENT_NOT_UPDATED,
   MESSAGE_CONTENT_NOT_FOUND,
+  MESSAGE_CONTENT_DELETED,
+  MESSAGE_CONTENT_NOT_DELETED,
+  TYPE_NOT_FOUND,
 } from '../../helpers';
 
 const TAG = 'App:Controller:Content';
@@ -35,10 +38,10 @@ ContentController.getById = async ctx => {
       TAG,
       `Content with id ${ctx.params.id} not found! Reason: ${err.name}`
     );
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404, MESSAGE_CONTENT_NOT_FOUND);
+    if (err.type === TYPE_NOT_FOUND) {
+      ctx.throw(404, err.message);
     } else {
-      ctx.throw(500);
+      ctx.throw(404);
     }
   }
 };
@@ -50,6 +53,7 @@ ContentController.getById = async ctx => {
 ContentController.add = async ctx => {
   try {
     ctx.body = await ContentRepository.add(ctx.request.body);
+    ctx.status = 201;
   } catch (err) {
     mainStory.error(TAG, `Unable to create new content! Reason: ${err}`);
     ctx.throw(400, err);
@@ -68,6 +72,7 @@ ContentController.update = async ctx => {
     );
     // if any documents were updated then return success
     if (response.nModified > 0) {
+      ctx.status = 201;
       ctx.body = {
         success: true,
         message: MESSAGE_CONTENT_UPDATED,
@@ -94,15 +99,22 @@ ContentController.update = async ctx => {
  */
 ContentController.delete = async ctx => {
   try {
-    const content = await ContentRepository.findByIdAndRemove(ctx.params.id);
-    if (!content) {
-      ctx.throw(404);
+    const success = await ContentRepository.delete(ctx.params.id);
+    // if any documents were updated then return success
+    if (success) {
+      ctx.body = 200;
+      ctx.body = {
+        success: true,
+        message: MESSAGE_CONTENT_DELETED,
+      };
+    } else {
+      ctx.status = 404;
+      ctx.body = {
+        success: false,
+        message: MESSAGE_CONTENT_NOT_DELETED,
+      };
     }
-    ctx.body = content;
   } catch (err) {
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404);
-    }
     ctx.throw(500);
   }
 };

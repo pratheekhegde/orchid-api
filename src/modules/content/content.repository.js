@@ -3,8 +3,12 @@ import ContentModel from './content.model';
 import {
   OrchidError,
   TYPE_INVALID_PAYLOAD,
+  TYPE_NOT_FOUND,
+  TYPE_REPO_ERROR,
   MESSAGE_INVALID_PAYLOAD,
+  MESSAGE_CONTENT_NOT_FOUND,
 } from '../../helpers';
+import { ifError } from 'assert';
 const TAG = 'App:Repository:Content';
 const ContentRepository = {};
 
@@ -12,11 +16,23 @@ const ContentRepository = {};
  * Get all contents
  */
 ContentRepository.findAll = async () => {
-  return ContentModel.find();
+  return ContentModel.find({ isDeleted: false });
 };
 
 ContentRepository.findById = async contentId => {
-  return ContentModel.findById(contentId);
+  try {
+    const result = await ContentModel.findOne({
+      _id: contentId,
+      isDeleted: false,
+    });
+    if (result) {
+      return result;
+    } else {
+      throw new OrchidError(TYPE_NOT_FOUND, MESSAGE_CONTENT_NOT_FOUND);
+    }
+  } catch (error) {
+    throw new OrchidError(TYPE_REPO_ERROR, error);
+  }
 };
 
 /**
@@ -41,7 +57,13 @@ ContentRepository.update = async (contentId, content) => {
 };
 
 ContentRepository.delete = async contentId => {
-  // [TODO]
+  const c = await ContentModel.findOne({ _id: contentId }).select('+isDeleted');
+  if (c.isDeleted) {
+    return false;
+  } else {
+    // delete the content by setting isDeleted true
+    return ContentModel.updateOne({ _id: contentId }, { isDeleted: true });
+  }
 };
 
 export default ContentRepository;

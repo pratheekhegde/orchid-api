@@ -7,6 +7,8 @@ const ContentSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     type: { type: String, required: true },
+    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false, select: false },
     __v: { type: Number, select: false },
   },
 
