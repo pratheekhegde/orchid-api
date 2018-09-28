@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 /**
- * Content Schema
+ * Publisher Schema
  */
 const PublisherSchema = mongoose.Schema(
   {
@@ -25,4 +25,4 @@ const PublisherSchema = mongoose.Schema(
  */
 PublisherSchema.method({});
 
-export default mongoose.model('Content', PublisherSchema);
+export default mongoose.model('Publisher', PublisherSchema);

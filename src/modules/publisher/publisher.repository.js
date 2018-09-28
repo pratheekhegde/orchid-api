@@ -5,22 +5,22 @@ const TAG = 'App:Repository:Publisher';
 const PublisherRepository = {};
 
 /**
- * Get all contents
+ * Get all publishers
  */
 PublisherRepository.findAll = async () => {
   return PublisherModel.find();
 };
 
 PublisherRepository.findById = async publisherId => {
-  return PublisherModel.findById(contentId);
+  return PublisherModel.findById(publisherId);
 };
 
 /**
- * Get all contents
- * @param {content} Content Object
+ * Get all publishers
+ * @param {publisher} Publisher Object
  */
 PublisherRepository.add = async publisher => {
-  return PublisherModel(content).save();
+  return PublisherModel(publisher).save();
 };
 
 PublisherRepository.update = async publisher => {

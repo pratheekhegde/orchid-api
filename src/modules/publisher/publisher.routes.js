@@ -1,15 +1,15 @@
 import Router from 'koa-router';
-import ContentController from './publisher.controller';
+import PublisherController from './publisher.controller';
 
 const publisherRouter = new Router({ prefix: '/publisher' });
 
 // Methods
 
-publisherRouter.get('/', ContentController.getAll);
-publisherRouter.get('/:id', ContentController.getById);
-publisherRouter.post('/', ContentController.add);
-publisherRouter.put('/:id', ContentController.update);
-publisherRouter.patch('/:id', ContentController.updateGivenFields);
-publisherRouter.delete('/:id', ContentController.delete);
+publisherRouter.get('/', PublisherController.getAll);
+publisherRouter.get('/:id', PublisherController.getById);
+publisherRouter.post('/', PublisherController.add);
+publisherRouter.put('/:id', PublisherController.update);
+publisherRouter.patch('/:id', PublisherController.updateGivenFields);
+publisherRouter.delete('/:id', PublisherController.delete);
 
 export default publisherRouter;
