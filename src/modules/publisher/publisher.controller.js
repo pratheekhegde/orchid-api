@@ -1,5 +1,14 @@
 import { mainStory } from 'storyboard';
 import PublisherRepository from './publisher.repository';
+import {
+  TYPE_INVALID_PAYLOAD,
+  MESSAGE_PUBLISHER_UPDATED,
+  MESSAGE_PUBLISHER_NOT_UPDATED,
+  MESSAGE_PUBLISHER_NOT_FOUND,
+  MESSAGE_PUBLISHER_DELETED,
+  MESSAGE_PUBLISHER_NOT_DELETED,
+  TYPE_NOT_FOUND,
+} from '../../helpers';
 
 const TAG = 'App:Controller:Publisher';
 const PublisherController = {};
@@ -29,10 +38,10 @@ PublisherController.getById = async ctx => {
       TAG,
       `Publisher with id ${ctx.params.id} not found! Reason: ${err.name}`
     );
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404, 'Publisher Not found');
+    if (err.type === TYPE_NOT_FOUND) {
+      ctx.throw(404, err.message);
     } else {
-      ctx.throw(500);
+      ctx.throw(404);
     }
   }
 };
@@ -45,7 +54,7 @@ PublisherController.add = async ctx => {
   try {
     ctx.body = await PublisherRepository.add(ctx.request.body);
   } catch (err) {
-    mainStory.error(TAG, `Unable to create new Publisher! Reason: ${err}`);
+    mainStory.error(TAG, `Unable to create new publisher! Reason: ${err}`);
     ctx.throw(400, err);
   }
 };
@@ -56,40 +65,31 @@ PublisherController.add = async ctx => {
  */
 PublisherController.update = async ctx => {
   try {
-    const Publisher = await PublisherRepository.findByIdAndUpdate(
+    const response = await PublisherRepository.update(
       ctx.params.id,
       ctx.request.body
     );
-    if (!Publisher) {
-      ctx.throw(404);
+
+    // if any documents were updated then return success
+    if (response.nModified > 0) {
+      ctx.status = 201;
+      ctx.body = {
+        success: true,
+        PUBLISHER: MESSAGE_PUBLISHER_UPDATED,
+      };
+    } else {
+      ctx.body = {
+        success: false,
+        PUBLISHER: MESSAGE_PUBLISHER_NOT_UPDATED,
+      };
     }
-    ctx.body = Publisher;
   } catch (err) {
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404);
+    // if invalid payload then send 400
+    if (err.type === TYPE_INVALID_PAYLOAD) {
+      ctx.throw(400, err.message);
+    } else {
+      ctx.throw(500);
     }
-    ctx.throw(500);
-  }
-};
-/**
- * Update a Publisher
- * @param {ctx} Koa Context
- */
-PublisherController.updateGivenFields = async ctx => {
-  try {
-    const Publisher = await PublisherRepository.findByIdAndUpdate(
-      ctx.params.id,
-      ctx.request.body
-    );
-    if (!Publisher) {
-      ctx.throw(404);
-    }
-    ctx.body = Publisher;
-  } catch (err) {
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404);
-    }
-    ctx.throw(500);
   }
 };
 
@@ -99,17 +99,22 @@ PublisherController.updateGivenFields = async ctx => {
  */
 PublisherController.delete = async ctx => {
   try {
-    const Publisher = await PublisherRepository.findByIdAndRemove(
-      ctx.params.id
-    );
-    if (!Publisher) {
-      ctx.throw(404);
+    const success = await PublisherRepository.delete(ctx.params.id);
+    // if any documents were updated then return success
+    if (success) {
+      ctx.body = 200;
+      ctx.body = {
+        success: true,
+        PUBLISHER: MESSAGE_PUBLISHER_DELETED,
+      };
+    } else {
+      ctx.status = 404;
+      ctx.body = {
+        success: false,
+        PUBLISHER: MESSAGE_PUBLISHER_NOT_DELETED,
+      };
     }
-    ctx.body = Publisher;
   } catch (err) {
-    if (err.name === 'CastError' || err.name === 'NotFoundError') {
-      ctx.throw(404);
-    }
     ctx.throw(500);
   }
 };

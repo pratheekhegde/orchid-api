@@ -9,7 +9,7 @@ publisherRouter.get('/', PublisherController.getAll);
 publisherRouter.get('/:id', PublisherController.getById);
 publisherRouter.post('/', PublisherController.add);
 publisherRouter.put('/:id', PublisherController.update);
-publisherRouter.patch('/:id', PublisherController.updateGivenFields);
+publisherRouter.patch('/:id', PublisherController.update);
 publisherRouter.delete('/:id', PublisherController.delete);
 
 export default publisherRouter;

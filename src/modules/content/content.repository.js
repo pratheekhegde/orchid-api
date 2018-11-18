@@ -8,7 +8,6 @@ import {
   MESSAGE_INVALID_PAYLOAD,
   MESSAGE_CONTENT_NOT_FOUND,
 } from '../../helpers';
-import { ifError } from 'assert';
 const TAG = 'App:Repository:Content';
 const ContentRepository = {};
 
