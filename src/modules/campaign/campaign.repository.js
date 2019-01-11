@@ -2,6 +2,7 @@ import { mainStory } from 'storyboard';
 import CampaignModel from './campaign.model';
 import {
   OrchidError,
+  errorFormatter,
   TYPE_INVALID_PAYLOAD,
   TYPE_NOT_FOUND,
   TYPE_REPO_ERROR,
@@ -43,6 +44,10 @@ CampaignRepository.findById = async campaignId => {
  * @param {campaign} Campaign Object
  */
 CampaignRepository.add = async campaign => {
+  const { error } = CampaignModel.validateModel(campaign);
+  if (error) {
+    throw new OrchidError(TYPE_INVALID_PAYLOAD, errorFormatter(error.details));
+  }
   return CampaignModel(campaign).save();
 };
 
@@ -56,6 +61,10 @@ CampaignRepository.update = async (campaignId, campaign) => {
   }
 
   // update the campaign
+  const { error } = CampaignModel.validateModel(campaign);
+  if (error) {
+    throw new OrchidError(TYPE_INVALID_PAYLOAD, errorFormatter(error.details));
+  }
   return CampaignModel.updateOne({ _id: campaignId }, campaign);
 };
 

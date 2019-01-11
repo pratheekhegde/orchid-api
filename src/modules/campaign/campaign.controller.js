@@ -86,7 +86,7 @@ CampaignController.update = async ctx => {
   } catch (err) {
     // if invalid payload then send 400
     if (err.type === TYPE_INVALID_PAYLOAD) {
-      ctx.throw(400, err.message);
+      ctx.throw(400, err);
     } else {
       ctx.throw(500);
     }
