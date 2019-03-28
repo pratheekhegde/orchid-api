@@ -1,17 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity } from "typeorm";
 import { Campaign } from "./Campaign";
 
 @Entity()
-export class Publisher {
+export class Publisher extends BaseEntity{
 
     @PrimaryGeneratedColumn("uuid")
     id: number;
 
     @Column()
     name: string;
-
-    @ManyToOne(type => Campaign, campaign => campaign.publishers)
-    campaign: Campaign;
 
     @Column({
         default: true

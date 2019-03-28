@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinTable, ManyToMany } from "typeorm";
 import { Content } from "./Content";
 import { Publisher } from "./Publisher";
 
 @Entity()
-export class Campaign {
+export class Campaign extends BaseEntity{
 
     @PrimaryGeneratedColumn("uuid")
     id: number;
@@ -26,11 +26,12 @@ export class Campaign {
     isDeleted: boolean;
 
     @Column({ type: 'timestamptz' })
-    campaignStartDate: Date;
+    startDate: Date;
 
     @Column({ type: 'timestamptz' })
-    campaignEndDate: Date;
+    endDate: Date;
 
-    @OneToMany(type => Publisher, publisher => publisher.campaign)
+    @ManyToMany(type => Publisher)
+    @JoinTable()
     publishers: Publisher[];
 }
