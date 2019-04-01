@@ -11,7 +11,9 @@ export class Campaign extends BaseEntity{
     @Column()
     name: string;
 
-    @ManyToOne(type => Content, content => content.campaigns)
+    @ManyToOne(type => Content, content => content.campaigns, {
+        eager: true
+    })
     content: Content;
 
     @Column({
@@ -31,7 +33,9 @@ export class Campaign extends BaseEntity{
     @Column({ type: 'timestamptz' })
     endDate: Date;
 
-    @ManyToMany(type => Publisher)
+    @ManyToMany(type => Publisher,{
+        eager: true
+    })
     @JoinTable()
     publishers: Publisher[];
 }

@@ -1,31 +1,30 @@
-
 export default `
 scalar Date
 
 type Query {
   contents: [Content!]!
-  content(id: ID!): Content!
+  content(id: ID!): Content
   campaigns: [Campaign!]!
-  campaign(id: ID!): Campaign!
+  campaign(id: ID!): Campaign
   publishers: [Publisher!]!
-  publisher(id: ID!): Publisher!
+  publisher(id: ID!): Publisher
 }
 
 type Mutation {
 
   # Content
   createContent(input: CreateContentInput!): Content!
-  updateContent(id: ID!, input: UpdateContentInput!): Content!
+  updateContent(id: ID!, input: UpdateContentInput!): Content
   deleteContent(id: ID!): Boolean
 
   # Campaign
   createCampaign(input: CreateCampaignInput!): Campaign!
-  updateCampaign(id: ID!, input: UpdateCampaignInput!): Campaign!
+  updateCampaign(id: ID!, input: UpdateCampaignInput!): Campaign
   deleteCampaign(id: ID!): Boolean
   
   # Publisher
   createPublisher(input: CreatePublisherInput!): Publisher!
-  updatePublisher(id: ID!, input: UpdatePublisherInput!): Publisher!
+  updatePublisher(id: ID!, input: UpdatePublisherInput!): Publisher
   deletePublisher(id: ID!): Boolean
 }
 
@@ -39,6 +38,7 @@ type Content {
 input CreateContentInput {
   name: String!
   type: String!
+  isActive: Boolean
 }
 
 input UpdateContentInput {
@@ -51,7 +51,7 @@ type Campaign {
   id: ID!
   name: String!
   content: Content!
-  publishers: Publisher!
+  publishers: [Publisher!]!
   isActive: String!
   startDate: Date!
   endDate: Date!
@@ -67,11 +67,11 @@ input CreateCampaignInput {
 
 input UpdateCampaignInput {
   name: String
-  startDate: Date!
-  endDate: Date!
+  startDate: Date
+  endDate: Date
   isActive: Boolean
-  content: ID!
-  publishers: [ID!]!
+  content: ID
+  publishers: [ID!]
 }
 
 type Publisher {

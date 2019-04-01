@@ -1,20 +1,22 @@
 import { Content } from "../../entity/Content";
 
 export default {
-    Query: {
-        content: (_, { id }) => Content.findOne(id),
-        contents: (_, { id }) => Content.find()
+  Query: {
+    content: (_, { id }) => Content.findOne(id),
+    contents: (_, { id }) => Content.find()
+  },
+  Mutation: {
+    createContent: async (parent, args) => {
+      return Content.save({ ...args.input });
     },
-    Mutation: {
-        createContent: async (parent, args) => {
-            return Content.save({ ...args.input })
-        },
-        updateContent: async (parent, args) => {
-            return Content.save({ ...args.input })
-        },
-        deleteContent: async (parent, args) => {
-            const contentToRemove = await Content.findOne(args.input.id);
-            return Content.remove(contentToRemove)
-        }
+    updateContent: async (parent, args) => {
+      const toUpdate = await Content.findOne(args.id);
+      if (!toUpdate) return null; // if content doesn't exist return null
+      return Content.save({ ...toUpdate, ...args.input }); // else return the updated data
     },
-}
+    deleteContent: async (parent, args) => {
+      const results = await Content.delete(args.id);
+      return results.affected; // return true if content got deleted else false
+    }
+  }
+};
